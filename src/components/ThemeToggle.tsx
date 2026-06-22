@@ -3,16 +3,6 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
-interface ViewTransition {
-  finished: Promise<void>;
-}
-
-interface DocumentWithTransition extends Document {
-  startViewTransition?: (
-    callback: () => void | Promise<void>
-  ) => ViewTransition;
-}
-
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -44,7 +34,12 @@ export function ThemeToggle() {
     document.documentElement.style.setProperty('--x', `${x}px`);
     document.documentElement.style.setProperty('--y', `${y}px`);
 
-    const doc = document as DocumentWithTransition;
+    // Safe access to View Transitions API
+    const doc = document as Document & {
+      startViewTransition?: (callback: () => void | Promise<void>) => {
+        finished: Promise<void>;
+      };
+    };
 
     if (!doc.startViewTransition) {
       setTheme(nextTheme);

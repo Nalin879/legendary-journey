@@ -1,0 +1,59 @@
+---
+title: "Why I Love React: Building This Blog"
+date: "2026-06-22"
+tags: ["React", "Next.js", "Web Development"]
+---
+
+# Why I Love React: Building This Blog
+
+React has changed the way I think about building web applications. Today, I want to share why I built this blog from scratch using Next.js and MDX instead of using a blogging platform.
+
+## The Problem with Traditional Blogging
+
+Most blogging platforms force you into a specific workflow: you write your content in their editor, your data lives on their servers, and you have limited control over the design.
+
+But as a developer, I wanted something different. I wanted to:
+
+- Write posts in Markdown (my favorite format)
+- Have full control over the design
+- Keep everything in version control on GitHub
+- Deploy to static HTML for blazing-fast performance
+
+## The Solution: Static Site Generation
+
+React isn't typically known for static site generation, but Next.js changed that. With the `output: 'export'` configuration, Next.js transforms from a server framework into a static HTML generator.
+
+Here's how it works:
+
+- You drop `.mdx` files into your `/content` folder
+- Next.js reads them at build time using `generateStaticParams()`
+- It generates one `.html` file per blog post
+- GitHub Actions deploys them instantly
+
+## The Magic of MDX
+
+MDX is *Markdown for JSX*. It means you can write Markdown like this, but also drop in React components whenever you want.
+
+```
+# My Heading
+
+Some paragraph text here.
+
+<MyCustomComponent prop="value" />
+```
+
+This gives you the best of both worlds: readability of Markdown with the power of React components.
+
+## The Result
+
+This blog is a portfolio piece that shows an interviewer: *"I didn't just use a template. I built the entire Markdown compilation pipeline."*
+
+Not only that, but every line of code here is educational. You're learning:
+
+- How Next.js static exports work
+- How to parse front matter with `gray-matter`
+- How to render Markdown programmatically
+- How GitHub Actions CI/CD works
+- How to deploy to GitHub Pages
+
+Try writing your own post and pushing it to GitHub. Watch the magic happen.

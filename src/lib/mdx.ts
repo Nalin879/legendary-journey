@@ -6,6 +6,9 @@ const contentDir = path.join(process.cwd(), 'content');
 const blogDir = path.join(contentDir, 'blogs');
 const projectsDir = path.join(contentDir, 'projects');
 
+// Base path from environment or default (matches next.config.js)
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '/legendary-journey';
+
 export interface Post {
   slug: string;
   title: string;
@@ -151,7 +154,7 @@ export function getGalleryImages() {
 
   const files = fs
     .readdirSync(dir)
-    .filter((f) => /\.(jpg|png|webp)$/i.test(f));
+    .filter((f) => /\.(jpg|jpeg|png|webp|gif)$/i.test(f));
 
-  return files.map((f) => `/gallery/${f}`);
+  return files.map((f) => `${basePath}/gallery/${f}`);
 }

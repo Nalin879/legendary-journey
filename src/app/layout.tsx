@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import './globals.css';
 
 import { Logo } from '@/components/Logo';
@@ -31,7 +32,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <div className="w-full px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
-            <header 
+            <header
               className="
                 mx-auto
                 flex
@@ -43,11 +44,11 @@ export default function RootLayout({
                 dark:border-gray-700
                 transition-colors
                 duration-500
-              " 
-          >
-              <a
+              "
+            >
+              <Link
                 href="/"
-                  className="
+                className="
                   flex
                   shrink-0
                   items-center
@@ -56,9 +57,9 @@ export default function RootLayout({
                 "
               >
                 <Logo />
-              </a>
+              </Link>
 
-              <nav   
+              <nav
                 className="
                 flex
                 items-center
@@ -72,41 +73,44 @@ export default function RootLayout({
                 duration-500
               "
               >
-                <a
+                <Link
                   href="/blog"
                   className="rounded-full px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   Blogs
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/projects"
                   className="rounded-full px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   Projects
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/camera"
                   className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  aria-label="Camera"
                 >
                   📷
-                </a>
+                </Link>
 
                 <a
-                  href="https://linkedin.com/in/YOUR_PROFILE"
+                  href="https://linkedin.com/in/nalin879"
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  aria-label="LinkedIn"
                 >
                   in
                 </a>
 
                 <a
-                  href="https://github.com/YOUR_USERNAME"
+                  href="https://github.com/Nalin879"
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  aria-label="GitHub"
                 >
                   ⌘
                 </a>

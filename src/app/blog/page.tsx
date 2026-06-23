@@ -5,38 +5,37 @@ export default function BlogPage() {
   const posts = getAllPosts();
 
   return (
-    <main className="mx-auto max-w-3xl py-10 sm:py-16">
-      <div className="mb-8 flex items-center gap-2 text-sm uppercase tracking-[0.3em] text-gray-500">
-        <span>✦</span>
-        <span>Blogs</span>
-      </div>
-
-      <h1 className="mb-8 text-4xl font-semibold tracking-tight sm:text-5xl">
+    <main className="mx-auto max-w-2xl py-10 sm:py-16">
+      <nav className= "mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+      <Link
+        href="/"
+        className="inline-block text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 border-b"
+      >
+        home
+      </Link>
+    </nav>
+      <h1 className="mb-12 text-3xl font-semibold tracking-tight sm:text-4xl">
         Writing and notes.
       </h1>
 
-      <div className="space-y-8">
+      <div className="space-y-10">
         {posts.map((post) => (
-          <article key={post.slug} className="border-b border-gray-200 pb-6 last:border-b-0">
-            <Link href={`/blog/${post.slug}`} className="block hover:opacity-70">
-              <h2 className="mb-2 text-2xl font-semibold">{post.title}</h2>
+          <article key={post.slug}>
+            <Link
+              href={`/blog/${post.slug}`}
+              className="group block"
+            >
+              <h2 className="mb-1 text-xl font-medium text-gray-900 group-hover:opacity-60 dark:text-gray-100">
+                {post.title}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {new Date(post.date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
             </Link>
-            <p className="mb-3 text-sm text-gray-500">
-              {new Date(post.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </p>
-            {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
-                  <span key={tag} className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
           </article>
         ))}
       </div>

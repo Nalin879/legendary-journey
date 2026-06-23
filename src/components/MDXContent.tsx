@@ -62,13 +62,13 @@ export function MDXContent({ content }: MDXContentProps) {
           parts.push(<em key={key}>{item.match[1]}</em>);
         } else if (item.type === 'code') {
           parts.push(
-            <code key={key} className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono">
+            <code key={key} className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm text-gray-900 dark:bg-gray-800 dark:text-gray-100">
               {item.match[1]}
             </code>
           );
         } else if (item.type === 'link') {
           parts.push(
-            <a key={key} href={item.match[2]} className="text-blue-600 hover:underline">
+            <a key={key} href={item.match[2]} className="text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">
               {item.match[1]}
             </a>
           );
@@ -92,7 +92,7 @@ export function MDXContent({ content }: MDXContentProps) {
     if (line.trim() === '') {
       if (buffer.length > 0) {
         elements.push(
-          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800">
+          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800 dark:text-gray-200">
             {renderInline(buffer.join('\n'))}
           </p>
         );
@@ -105,42 +105,42 @@ export function MDXContent({ content }: MDXContentProps) {
     if (line.startsWith('# ')) {
       if (buffer.length > 0) {
         elements.push(
-          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800">
+          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800 dark:text-gray-200">
             {renderInline(buffer.join('\n'))}
           </p>
         );
         buffer = [];
       }
       elements.push(
-        <h1 key={`h1-${i}`} className="text-4xl font-bold my-6 text-gray-900">
+        <h1 key={`h1-${i}`} className="my-6 text-[34px] font-bold text-gray-900 sm:text-4xl dark:text-white">
           {renderInline(line.slice(2))}
         </h1>
       );
     } else if (line.startsWith('## ')) {
       if (buffer.length > 0) {
         elements.push(
-          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800">
+          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800 dark:text-gray-200">
             {renderInline(buffer.join('\n'))}
           </p>
         );
         buffer = [];
       }
       elements.push(
-        <h2 key={`h2-${i}`} className="text-3xl font-bold my-5 text-gray-900">
+        <h2 key={`h2-${i}`} className="my-5 text-[28px] font-bold text-gray-900 sm:text-3xl dark:text-white">
           {renderInline(line.slice(3))}
         </h2>
       );
     } else if (line.startsWith('### ')) {
       if (buffer.length > 0) {
         elements.push(
-          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800">
+          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800 dark:text-gray-200">
             {renderInline(buffer.join('\n'))}
           </p>
         );
         buffer = [];
       }
       elements.push(
-        <h3 key={`h3-${i}`} className="text-2xl font-bold my-4 text-gray-900">
+        <h3 key={`h3-${i}`} className="my-4 text-[22px] font-bold text-gray-900 sm:text-2xl dark:text-white">
           {renderInline(line.slice(4))}
         </h3>
       );
@@ -148,7 +148,7 @@ export function MDXContent({ content }: MDXContentProps) {
       // List item
       if (buffer.length > 0) {
         elements.push(
-          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800">
+          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800 dark:text-gray-200">
             {renderInline(buffer.join('\n'))}
           </p>
         );
@@ -160,7 +160,7 @@ export function MDXContent({ content }: MDXContentProps) {
         liItems.push((lines[i] || '').slice(2));
       }
       elements.push(
-        <ul key={`ul-${i}`} className="list-disc list-inside mb-4 text-gray-800 space-y-1">
+        <ul key={`ul-${i}`} className="list-disc list-inside mb-4 text-gray-800 dark:text-gray-200 space-y-1">
           {liItems.map((item, idx) => (
             <li key={idx} className="ml-4">
               {renderInline(item)}
@@ -172,7 +172,7 @@ export function MDXContent({ content }: MDXContentProps) {
       // Blockquote
       if (buffer.length > 0) {
         elements.push(
-          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800">
+          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800 dark:text-gray-200">
             {renderInline(buffer.join('\n'))}
           </p>
         );
@@ -184,7 +184,7 @@ export function MDXContent({ content }: MDXContentProps) {
         quoteLines.push((lines[i] || '').slice(2));
       }
       elements.push(
-        <blockquote key={`blockquote-${i}`} className="border-l-4 border-gray-300 pl-4 italic text-gray-700 my-4">
+        <blockquote key={`blockquote-${i}`} className="border-l-4 border-gray-300 pl-4 italic text-gray-700 dark:border-gray-600 dark:text-gray-300 my-4">
           {renderInline(quoteLines.join('\n'))}
         </blockquote>
       );
@@ -192,7 +192,7 @@ export function MDXContent({ content }: MDXContentProps) {
       // Code block
       if (buffer.length > 0) {
         elements.push(
-          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800">
+          <p key={`p-${i}`} className="mb-4 leading-relaxed text-gray-800 dark:text-gray-200">
             {renderInline(buffer.join('\n'))}
           </p>
         );
@@ -205,7 +205,7 @@ export function MDXContent({ content }: MDXContentProps) {
         i++;
       }
       elements.push(
-        <pre key={`code-${i}`} className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4">
+        <pre key={`code-${i}`} className="my-4 overflow-x-auto rounded-lg bg-gray-900 p-4 text-gray-100 dark:bg-gray-800 dark:text-gray-100">
           <code className="font-mono text-sm">{codeLines.join('\n')}</code>
         </pre>
       );
@@ -216,7 +216,7 @@ export function MDXContent({ content }: MDXContentProps) {
 
   if (buffer.length > 0) {
     elements.push(
-      <p key={`p-end`} className="mb-4 leading-relaxed text-gray-800">
+      <p key={`p-end`} className="mb-4 leading-relaxed text-gray-800 dark:text-gray-200">
         {renderInline(buffer.join('\n'))}
       </p>
     );

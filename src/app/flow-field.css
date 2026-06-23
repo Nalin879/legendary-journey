@@ -1,0 +1,52 @@
+/* FlowField — slow continuous drift + center-biased visibility */
+
+/* The whole path group rotates slowly around the field's center.
+   Because the curves were generated from a continuous noise field,
+   a slow rotation reads as gentle, ambient flow. */
+.flow-field-rotor {
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  animation: flow-drift 60s linear infinite;
+  will-change: transform;
+}
+
+@keyframes flow-drift {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.04);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* Center bias — fade the field to nothing at the corners and toward
+   the edges, so the densest part of the composition sits at the
+   center of the viewport. The radial-gradient mask is set on the
+   wrapper that holds the SVG (see usage in page.tsx). */
+.flow-field-wrap {
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.85) 25%,
+    rgba(0, 0, 0, 0.55) 55%,
+    rgba(0, 0, 0, 0.15) 85%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.85) 25%,
+    rgba(0, 0, 0, 0.55) 55%,
+    rgba(0, 0, 0, 0.15) 85%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-field-rotor {
+    animation: none;
+  }
+}

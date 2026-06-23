@@ -1,72 +1,48 @@
 .logo {
-  width: 165px;
+  width: 48px;
+  margin-left: 8px;
   height: 32px;
   overflow: visible;
-  /*will-change: ;*/
   color: currentColor;
-  animation: float 1s ease-in-out infinite;
 }
 
 .dark .logo {
   color: #f9fafb;
-
-  filter: drop-shadow(
-    0 0 8px rgba(255, 255, 255, 0.08)
-  );
 }
 
 .logo-path {
   fill: none;
-
   stroke: currentColor;
   stroke-width: 0.8;
-
   stroke-linecap: round;
   stroke-linejoin: round;
-
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
   will-change: stroke-dashoffset;
-
-  animation: signatureLoop 8s ease-in-out infinite;
+  animation: signatureDraw 8s ease-in-out infinite;
 }
 
-@keyframes signatureLoop {
+@keyframes signatureDraw {
   0%,
   15% {
     stroke-dasharray: 100;
     stroke-dashoffset: 100;
   }
 
-  35% {
-    stroke-dasharray: 100;
-    stroke-dashoffset: 0;
-  }
-
+  35%,
   65% {
     stroke-dasharray: 100;
     stroke-dashoffset: 0;
   }
 
   85% {
-    stroke-dasharray: 0 100;
-    stroke-dashoffset: 0;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
   }
 
   100% {
-    stroke-dasharray: 0 100;
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-2px);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
   }
 }
 
@@ -74,5 +50,7 @@
   .logo,
   .logo-path {
     animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
   }
 }

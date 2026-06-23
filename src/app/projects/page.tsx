@@ -5,37 +5,60 @@ export default function ProjectsPage() {
   const projects = getAllProjects();
 
   return (
-    <main className="mx-auto max-w-3xl py-10 sm:py-16">
-      <div className="mb-8 flex items-center gap-2 text-sm uppercase tracking-[0.3em] text-gray-500">
-        <span>✦</span>
-        <span>Projects</span>
-      </div>
-
-      <h1 className="mb-8 text-4xl font-semibold tracking-tight sm:text-5xl">
-        Selected work and experiments.
+    <main className="mx-auto max-w-2xl py-10 sm:py-16">
+      <nav className="mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+        <Link
+        href="/"
+        className="inline-block text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 border-b"
+      >
+        home
+      </Link>
+    </nav>
+      <h1 className="mb-12 text-3xl font-semibold tracking-tight sm:text-4xl">
+        Projects.
       </h1>
 
-      <div className="space-y-6">
+      <div className="space-y-10">
         {projects.map((project) => (
-          <article key={project.slug} className="rounded-2xl border border-gray-200 p-6">
-            <Link href={`/projects/${project.slug}`} className="block hover:opacity-70">
-              <h2 className="mb-2 text-2xl font-semibold">{project.title}</h2>
+          <article key={project.slug}>
+            <Link
+              href={`/projects/${project.slug}`}
+              className="group block"
+            >
+              <h2 className="mb-1 text-xl font-medium text-gray-900 group-hover:opacity-60 dark:text-gray-100">
+                {project.title}
+              </h2>
+              {project.summary && (
+                <p className="text-gray-600 dark:text-gray-400">
+                  {project.summary}
+                </p>
+              )}
             </Link>
-            {project.summary && <p className="mb-4 text-gray-700">{project.summary}</p>}
-            <div className="flex flex-wrap gap-3">
-              {project.link && (
-                <a href={project.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-medium transition hover:opacity-70">
-                  <span>↗</span>
-                  <span>View project</span>
-                </a>
-              )}
-              {project.video && (
-                <a href={project.video} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-medium transition hover:opacity-70">
-                  <span>🎬</span>
-                  <span>Watch video</span>
-                </a>
-              )}
-            </div>
+
+            {(project.link || project.video) && (
+              <div className="mt-3 flex flex-wrap gap-4 text-sm">
+                {project.link && (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                  >
+                    ↗ View project
+                  </a>
+                )}
+                {project.video && (
+                  <a
+                    href={project.video}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                  >
+                    🎬 Watch video
+                  </a>
+                )}
+              </div>
+            )}
           </article>
         ))}
       </div>

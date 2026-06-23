@@ -30,42 +30,45 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <article className="max-w-2xl mx-auto">
-      {/* Back Link */}
-      <Link href="/" className="text-sm text-gray-600 hover:text-[#1a1a1a] mb-8 inline-block">
-        ← Back to home
+    <article className="mx-auto max-w-2xl px-1 py-10 sm:py-16">
+      <nav className="mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+      <Link
+        href="/"
+        className="inline-block text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 border-b"
+      >
+        home
       </Link>
+      <span> / </span>
+      <Link
+        href="/blog"
+        className="inline-block text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 border-b"
+      >
+        blogs
+      </Link>
+    </nav>
 
-      {/* Post Header */}
-      <header className="mb-12 pb-8 border-b border-gray-200">
-        <h1 className="text-5xl sm:text-5xl font-bold mb-4">{post.title}</h1>
-        <p className="text-gray-600">
+      <header className="mb-10">
+        <h1 className="mb-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+          {post.title}
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           {new Date(post.date).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
           })}
         </p>
-        {post.tags && post.tags.length > 0 && (
-          <div className="flex gap-2 flex-wrap mt-4">
-            {post.tags.map((tag) => (
-              <span key={tag} className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-700">
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
       </header>
 
-      {/* Post Content */}
-      <div className="prose prose-sm sm:prose lg:prose-lg max-w-none mb-16">
+      <div>
         <MDXContent content={post.content} />
       </div>
-
-      {/* Footer */}
-      <footer className="pt-8 border-t border-gray-200">
-        <Link href="/" className="text-sm text-gray-600 hover:text-[#1a1a1a]">
-          ← Back to home
+      <footer className="mt-16 border-t border-gray-200 pt-8 dark:border-gray-800">
+        <Link
+          href="/blog"
+          className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 border-b"
+        >
+          blogs
         </Link>
       </footer>
     </article>

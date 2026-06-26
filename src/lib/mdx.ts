@@ -1,27 +1,23 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { SITE } from '@/lib/site';
 
 const contentDir = path.join(process.cwd(), 'content');
 const blogDir = path.join(contentDir, 'blogs');
 const projectsDir = path.join(contentDir, 'projects');
 
-// Base path from environment or default (matches next.config.js)
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '/legendary-journey';
-
-export interface Post {
-  slug: string;
-  title: string;
-  date: string;
-  tags?: string[];
-  content: string;
-}
+/* ---------- Public types ---------- */
 
 export interface PostMetadata {
   slug: string;
   title: string;
   date: string;
   tags?: string[];
+}
+
+export interface Post extends PostMetadata {
+  content: string;
 }
 
 export interface ProjectMetadata {
@@ -37,124 +33,160 @@ export interface ProjectItem extends ProjectMetadata {
   content: string;
 }
 
-/**
- * Get all post metadata (for listing)
- */
-export function getAllPosts(): PostMetadata[] {
-  if (!fs.existsSync(blogDir)) return [];
+/* ---------- Generic MDX collection factory ---------- */
 
-  const files = fs.readdirSync(blogDir);
-
-  const posts = files
-    .filter((file) => file.endsWith('.mdx'))
-    .map((file) => {
-      const filePath = path.join(blogDir, file);
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      const { data } = matter(fileContents);
-
-      return {
-        slug: file.replace(/\.mdx$/, ''),
-        title: data.title || 'Untitled',
-        date: data.date || '',
-        tags: data.tags || [],
-      };
-    });
-
-  return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+interface CollectionConfig<T> {
+  dir: string;
+  /** Maps frontmatter + slug → typed metadata. */
+  map: (data: Record<string, unknown>, slug: string) => T;
+  /** Sort key extractor. Missing dates fall to the bottom. */
+  sortBy?: (item: T) => number;
 }
 
-/**
- * Get a single post by slug
- */
-export function getPost(slug: string): Post | null {
-  try {
-    const filePath = path.join(blogDir, `${slug}.mdx`);
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const { data, content } = matter(fileContents);
+const UNTITLED = 'Untitled';
 
-    return {
-      slug,
-      title: data.title || 'Untitled',
-      date: data.date || '',
-      tags: data.tags || [],
-      content,
-    };
-  } catch (error) {
-    return null;
-  }
-}
-
-/**
- * Get all slugs (for generateStaticParams)
- */
-export function getAllSlugs(): string[] {
-  if (!fs.existsSync(blogDir)) return [];
-
-  const files = fs.readdirSync(blogDir);
-  return files
-    .filter((file) => file.endsWith('.mdx'))
-    .map((file) => file.replace(/\.mdx$/, ''));
-}
-
-export function getAllProjects(): ProjectMetadata[] {
-  if (!fs.existsSync(projectsDir)) return [];
-
-  const files = fs.readdirSync(projectsDir).filter((file) => file.endsWith('.mdx'));
-
-  const projects = files.map((file) => {
-    const filePath = path.join(projectsDir, file);
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const { data } = matter(fileContents);
-
-    return {
-      slug: file.replace(/\.mdx$/, ''),
-      title: data.title || 'Untitled Project',
-      summary: data.summary || '',
-      link: data.link || '',
-      video: data.video || '',
-      date: data.date || '',
-    };
-  });
-
-  return projects.sort((a, b) => new Date(b.date || '1970-01-01').getTime() - new Date(a.date || '1970-01-01').getTime());
-}
-
-export function getProject(slug: string): ProjectItem | null {
-  try {
-    const filePath = path.join(projectsDir, `${slug}.mdx`);
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const { data, content } = matter(fileContents);
-
-    return {
-      slug,
-      title: data.title || 'Untitled Project',
-      summary: data.summary || '',
-      link: data.link || '',
-      video: data.video || '',
-      date: data.date || '',
-      content,
-    };
-  } catch (error) {
-    return null;
-  }
-}
-
-export function getAllProjectSlugs(): string[] {
-  if (!fs.existsSync(projectsDir)) return [];
-
+function listMdxSlugs(dir: string): string[] {
+  if (!fs.existsSync(dir)) return [];
   return fs
-    .readdirSync(projectsDir)
-    .filter((file) => file.endsWith('.mdx'))
-    .map((file) => file.replace(/\.mdx$/, ''));
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.mdx'))
+    .map((f) => f.replace(/\.mdx$/, ''));
 }
 
+function readMdx(
+  dir: string,
+  slug: string,
+): { data: Record<string, unknown>; content: string } | null {
+  try {
+    const filePath = path.join(dir, `${slug}.mdx`);
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const { data, content } = matter(fileContents);
+    return { data, content };
+  } catch {
+    return null;
+  }
+}
 
-export function getGalleryImages() {
+function createMdxCollection<T>(config: CollectionConfig<T>) {
+  const { dir, map, sortBy } = config;
+
+  return {
+    list(): T[] {
+      const items = listMdxSlugs(dir).map((slug) => {
+        const read = readMdx(dir, slug);
+        return map(read?.data ?? {}, slug);
+      });
+      return sortBy ? items.sort((a, b) => sortBy(b) - sortBy(a)) : items;
+    },
+    get(slug: string): T | null {
+      const read = readMdx(dir, slug);
+      if (!read) return null;
+      return map(read.data, slug);
+    },
+    slugs(): string[] {
+      return listMdxSlugs(dir);
+    },
+  };
+}
+
+/* ---------- Blog posts collection ---------- */
+
+function parseDateKey(s: unknown): number {
+  const t = Date.parse(typeof s === 'string' ? s : '');
+  return Number.isNaN(t) ? 0 : t;
+}
+
+const posts = createMdxCollection<Post>({
+  dir: blogDir,
+  map: (data, slug) => ({
+    slug,
+    title: (data.title as string) || UNTITLED,
+    date: (data.date as string) || '',
+    tags: (data.tags as string[] | undefined) ?? [],
+    // Content is only populated by the direct getPost() helper below;
+    // list() callers receive empty content and should use getPost() instead.
+    content: '',
+  }),
+  sortBy: (post) => parseDateKey(post.date),
+});
+
+/** Single blog post with body content. */
+export function getPost(slug: string): Post | null {
+  const read = readMdx(blogDir, slug);
+  if (!read) return null;
+  return {
+    slug,
+    title: (read.data.title as string) || UNTITLED,
+    date: (read.data.date as string) || '',
+    tags: (read.data.tags as string[] | undefined) ?? [],
+    content: read.content,
+  };
+}
+
+/** All blog post metadata (no body), newest first. */
+export function getAllPosts(): PostMetadata[] {
+  return posts
+    .list()
+    .map(({ content: _content, ...meta }) => meta);
+}
+
+/** All blog post slugs (for generateStaticParams). */
+export function getAllSlugs(): string[] {
+  return posts.slugs();
+}
+
+/* ---------- Projects collection ---------- */
+
+const projects = createMdxCollection<ProjectItem>({
+  dir: projectsDir,
+  map: (data, slug) => ({
+    slug,
+    title: (data.title as string) || UNTITLED,
+    summary: (data.summary as string) || '',
+    link: (data.link as string) || '',
+    video: (data.video as string) || '',
+    date: (data.date as string) || '',
+    content: '',
+  }),
+  sortBy: (project) => parseDateKey(project.date),
+});
+
+/** Single project with body content. */
+export function getProject(slug: string): ProjectItem | null {
+  const read = readMdx(projectsDir, slug);
+  if (!read) return null;
+  return {
+    slug,
+    title: (read.data.title as string) || UNTITLED,
+    summary: (read.data.summary as string) || '',
+    link: (read.data.link as string) || '',
+    video: (read.data.video as string) || '',
+    date: (read.data.date as string) || '',
+    content: read.content,
+  };
+}
+
+/** All project metadata (no body), newest first. */
+export function getAllProjects(): ProjectMetadata[] {
+  return projects
+    .list()
+    .map(({ content: _content, ...meta }) => meta);
+}
+
+/** All project slugs (for generateStaticParams). */
+export function getAllProjectSlugs(): string[] {
+  return projects.slugs();
+}
+
+/* ---------- Gallery (not MDX, kept here for proximity) ---------- */
+
+const IMAGE_RE = /\.(jpg|jpeg|png|webp|gif)$/i;
+
+export function getGalleryImages(): string[] {
   const dir = path.join(process.cwd(), 'public/gallery');
-
-  const files = fs
+  if (!fs.existsSync(dir)) return [];
+  return fs
     .readdirSync(dir)
-    .filter((f) => /\.(jpg|jpeg|png|webp|gif)$/i.test(f));
-
-  return files.map((f) => `${basePath}/gallery/${f}`);
+    .filter((f) => IMAGE_RE.test(f))
+    .map((f) => `${SITE.basePath}/gallery/${f}`);
 }

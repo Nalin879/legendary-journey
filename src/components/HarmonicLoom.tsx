@@ -62,7 +62,7 @@ export const HarmonicLoom: React.FC = () => {
         const nodeX = (w / 2) * (0.35 + 0.5 * Math.sin(time * 0.32 + phase * 1.5));
         const nodeY = (h / 2) * (0.35 + 0.5 * Math.cos(time * 0.41 + phase * 1.5));
 
-        const alpha = (0.03 + (i / STRAND_COUNT) * 0.05) * (isDark ? 2.2 : 2.8);
+        const alpha = (0.03 + (i / STRAND_COUNT) * 0.05) * (isDark ? 2.8 : 2.8);
 
         ctx.strokeStyle = `rgba(${baseColor}, ${alpha})`;
         ctx.lineWidth = 1.0;
@@ -94,7 +94,7 @@ export const HarmonicLoom: React.FC = () => {
         
         const drawNode = (nx: number, ny: number) => {
           ctx.beginPath();
-          ctx.arc(nx, ny, isDark ? 1.4 : 1.1, 0, Math.PI * 2);
+          ctx.arc(nx, ny, isDark ? 1.4 : 1.4, 0, Math.PI * 2);
           ctx.fill();
         };
 

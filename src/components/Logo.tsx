@@ -1,10 +1,12 @@
+import { SITE } from '@/lib/site';
+
 export function Logo() {
   return (
     <svg
       className="logo"
       viewBox="0 0 21.966673 14.032557"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="Nalinraj Subramanian"
+      aria-label={SITE.author}
       role="img"
     >
       <path

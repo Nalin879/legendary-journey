@@ -8,6 +8,11 @@ export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // The classic "mounted" guard from next-themes: the server doesn't
+    // know the resolved theme, so we defer the real button render to
+    // after hydration. Setting state synchronously here is intentional
+    // — it's the only way to gate on the first client-side render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -36,7 +41,7 @@ export function ThemeToggle() {
 
     // Safe access to View Transitions API
     const doc = document as Document & {
-      startViewTransition?: (callback: () => void | Promise<void>) => {
+      startViewTransition?: (_callback: () => void | Promise<void>) => {
         finished: Promise<void>;
       };
     };

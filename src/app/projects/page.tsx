@@ -1,40 +1,22 @@
-import Link from 'next/link';
 import { getAllProjects } from '@/lib/mdx';
+import { ListCard } from '@/components/ListCard';
+import { PageHeader, PageShell } from '@/components/PageHeader';
 
 export default function ProjectsPage() {
   const projects = getAllProjects();
 
   return (
-    <main className="mx-auto max-w-2xl py-10 sm:py-16">
-      <nav className="mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-        <Link
-        href="/"
-        className="inline-block text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 border-b"
-      >
-        home
-      </Link>
-    </nav>
-      <h1 className="mb-12 text-3xl font-semibold tracking-tight sm:text-4xl">
-        Projects.
-      </h1>
+    <PageShell back={{ href: '/', label: 'home' }}>
+      <PageHeader title="Projects." />
 
       <div className="space-y-10">
         {projects.map((project) => (
-          <article key={project.slug}>
-            <Link
+          <div key={project.slug}>
+            <ListCard
               href={`/projects/${project.slug}`}
-              className="group block"
-            >
-              <h2 className="mb-1 text-xl font-medium text-gray-900 group-hover:opacity-60 dark:text-gray-100">
-                {project.title}
-              </h2>
-              {project.summary && (
-                <p className="text-gray-600 dark:text-gray-400">
-                  {project.summary}
-                </p>
-              )}
-            </Link>
-
+              title={project.title}
+              description={project.summary}
+            />
             {(project.link || project.video) && (
               <div className="mt-3 flex flex-wrap gap-4 text-sm">
                 {project.link && (
@@ -59,9 +41,9 @@ export default function ProjectsPage() {
                 )}
               </div>
             )}
-          </article>
+          </div>
         ))}
       </div>
-    </main>
+    </PageShell>
   );
 }

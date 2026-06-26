@@ -1,13 +1,16 @@
-import Link from 'next/link';
 import { getAllSlugs, getPost } from '@/lib/mdx';
 import { MDXContent } from '@/components/MDXContent';
 import { notFound } from 'next/navigation';
+import { formatDate } from '@/lib/date';
+import {
+  PageFooter,
+  PageHeader,
+  PageShell,
+} from '@/components/PageHeader';
+import { SITE } from '@/lib/site';
 
 export async function generateStaticParams() {
-  const slugs = getAllSlugs();
-  return slugs.map((slug) => ({
-    slug,
-  }));
+  return getAllSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -16,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!post) return {};
 
   return {
-    title: `${post.title} | Nalin Subramanian`,
+    title: `${post.title} | ${SITE.name}`,
     description: `Blog post: ${post.title}`,
   };
 }
@@ -30,47 +33,29 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <article className="mx-auto max-w-2xl px-1 py-10 sm:py-16">
-      <nav className="mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-      <Link
-        href="/"
-        className="inline-block text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 border-b"
-      >
-        home
-      </Link>
-      <span> / </span>
-      <Link
-        href="/blog"
-        className="inline-block text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 border-b"
-      >
-        blogs
-      </Link>
-    </nav>
+    <PageShell
+      back={[
+        { href: '/', label: 'home' },
+        { href: '/blog', label: 'blogs' },
+      ]}
+    >
+      <article>
+        <PageHeader
+          title={post.title}
+          description={
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {formatDate(post.date)}
+            </span>
+          }
+          className="mb-10"
+        />
 
-      <header className="mb-10">
-        <h1 className="mb-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-          {post.title}
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {new Date(post.date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </p>
-      </header>
+        <div>
+          <MDXContent content={post.content} />
+        </div>
+      </article>
 
-      <div>
-        <MDXContent content={post.content} />
-      </div>
-      <footer className="mt-16 border-t border-gray-200 pt-8 dark:border-gray-800">
-        <Link
-          href="/blog"
-          className="text-sm text-gray-600 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 border-b"
-        >
-          blogs
-        </Link>
-      </footer>
-    </article>
+      <PageFooter back={{ href: '/blog', label: 'blogs' }} />
+    </PageShell>
   );
 }

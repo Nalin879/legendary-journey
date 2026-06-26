@@ -1,5 +1,4 @@
 @import "./logo.css";
-@import "./flow-field.css";
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -38,13 +37,6 @@ body {
   transition:
     background-color 400ms cubic-bezier(0.4, 0, 0.2, 1),
     color 400ms cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: #ffffff; 
-  color: #0f172a;            
-}
-
-.dark body {
-  background-color: #09090b;
-  color: #f8fafc;
 }
 
 a {

@@ -100,18 +100,31 @@ This tells Next.js: *"When I build, turn my entire website into static `.html` f
 ### The Pipeline
 
 1. **Build Time**: `pnpm build` runs
-2. **Static Params**: `generateStaticParams()` in `src/app/blog/[slug]/page.tsx` reads all `.mdx` files
-3. **HTML Generation**: Next.js renders each post as a separate `.html` file
+2. **Static Params**: `generateStaticParams()` in each `[slug]/page.tsx` reads the slugs from `src/lib/mdx.ts`
+3. **HTML Generation**: Next.js renders each post/project as a separate `.html` file
 4. **Output**: All `.html` files land in `./out` folder
 5. **Deployment**: GitHub Actions copies `./out` to GitHub Pages
 6. **Live**: Your site is now live on `yourusername.github.io`
 
-### The Components
+### Project Structure
 
-- **`src/app/page.tsx`** - Homepage with blog list
-- **`src/app/blog/[slug]/page.tsx`** - Individual blog post template (dynamic)
-- **`src/lib/mdx.ts`** - Utilities to read and parse `.mdx` files with `gray-matter`
-- **`src/components/MDXContent.tsx`** - Markdown renderer for blog content
+- **`src/app/page.tsx`** — Homepage
+- **`src/app/blog/page.tsx` / `[slug]/page.tsx`** — Blog index + post template
+- **`src/app/projects/page.tsx` / `[slug]/page.tsx`** — Projects index + detail template
+- **`src/app/camera/page.tsx`** — Full-bleed image gallery
+- **`src/app/layout.tsx`** — Root layout (header, navbar, theme, HarmonicLoom canvas)
+- **`src/lib/mdx.ts`** — MDX collection factory + gallery image loader
+- **`src/lib/site.ts`** — Site-wide constants (name, social URLs, basePath)
+- **`src/lib/date.ts`** — Shared date formatters
+- **`src/components/`**
+  - `Logo.tsx` — Hand-drawn SVG logo
+  - `Navbar.tsx` — Top navigation bar
+  - `ThemeProvider.tsx` / `ThemeToggle.tsx` — Light/dark theme via `next-themes`
+  - `HarmonicLoom.tsx` — Background canvas animation
+  - `MDXContent.tsx` — Markdown/MDX renderer for post bodies
+  - `PageHeader.tsx` — `PageShell`, `PageHeader`, `PageFooter`, `Breadcrumb`, `BackLink`
+  - `ListCard.tsx` — One entry in the blog/projects index
+  - `icons.tsx` — Inline SVG icon set used by the navbar
 
 ## 🚀 Deploy to GitHub Pages
 
@@ -138,21 +151,33 @@ No manual deployment needed. Just write and push.
 
 ```
 my-portfolio-blog/
-├── content/                          # All your blog posts
-│   ├── 2026-06-22-my-first-post.mdx
-│   └── 2026-06-20-my-second-post.mdx
+├── content/                          # All your content
+│   ├── blogs/                        #   blog posts (.mdx)
+│   └── projects/                     #   project pages (.mdx)
+├── public/gallery/                   # Images shown by /camera
 ├── src/
 │   ├── app/
-│   │   ├── blog/
-│   │   │   └── [slug]/
-│   │   │       └── page.tsx          # Dynamic blog template
+│   │   ├── blog/[slug]/page.tsx      # Blog index + post template
+│   │   ├── projects/[slug]/page.tsx  # Projects index + detail template
+│   │   ├── camera/page.tsx           # Full-bleed image gallery
 │   │   ├── page.tsx                  # Homepage
-│   │   ├── layout.tsx                # Root layout
-│   │   └── globals.css               # Global styles
+│   │   ├── layout.tsx                # Root layout (header + Navbar + theme)
+│   │   ├── globals.css               # Tailwind entry + theme transition
+│   │   └── logo.css                  # SVG logo styling
 │   ├── components/
-│   │   └── MDXContent.tsx            # Markdown renderer
+│   │   ├── HarmonicLoom.tsx          # Background canvas animation
+│   │   ├── ListCard.tsx              # Reusable index-entry card
+│   │   ├── Logo.tsx                  # Hand-drawn SVG logo
+│   │   ├── MDXContent.tsx            # Markdown renderer for posts
+│   │   ├── Navbar.tsx                # Top navigation
+│   │   ├── PageHeader.tsx            # PageShell + PageHeader + Breadcrumb + BackLink
+│   │   ├── ThemeProvider.tsx         # next-themes wrapper
+│   │   ├── ThemeToggle.tsx           # Animated light/dark toggle
+│   │   └── icons.tsx                 # Inline SVG icon set
 │   └── lib/
-│       └── mdx.ts                    # MDX parsing utilities
+│       ├── date.ts                   # Shared date formatters
+│       ├── mdx.ts                    # MDX collection factory + gallery loader
+│       └── site.ts                   # Site-wide constants
 ├── .github/workflows/
 │   └── deploy.yml                    # GitHub Actions CI/CD
 ├── next.config.js                    # Next.js config (enables static export)
@@ -168,22 +193,11 @@ Edit `src/app/page.tsx` to change how the homepage looks and add your own conten
 
 ### Customize Styling
 
-All styling uses TailwindCSS. Edit `src/app/globals.css` for global styles.
+All styling uses TailwindCSS. Edit `src/app/globals.css` for global styles and `src/app/logo.css` for the logo signature animation.
 
-### Change Colors
+### Change Site Identity
 
-Update colors in `tailwind.config.ts`:
-
-```typescript
-theme: {
-  extend: {
-    colors: {
-      'dark': '#1a1a1a',   // ← Change this
-      'light': '#fafafa',   // ← Or this
-    },
-  },
-},
-```
+Site-wide values (name, author, social links, basePath) live in `src/lib/site.ts`. Update them in one place.
 
 ### Add React Components to Posts
 
